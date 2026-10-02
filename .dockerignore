@@ -1,0 +1,10 @@
+.git
+.env
+target
+frontend
+node_modules
+**/node_modules
+**/dist
+.idea
+.vscode
+*.iml

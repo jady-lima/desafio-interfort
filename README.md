@@ -12,8 +12,8 @@ Aplicação para consultar endereços por CEP utilizando a API pública ViaCEP e
 - Vue 3
 - Vite
 - HTML, CSS e JavaScript
-- JUnit 5 e Mockito
-- H2 para testes
+- JUnit 5, Mockito e H2 para testes
+- Docker
 
 ## Estrutura do projeto
 
@@ -32,27 +32,66 @@ consulta-cep/
 │   │   └── resources/
 │   └── test/
 ├── frontend/
+├── Dockerfile
+├── docker-compose.yml
 ├── pom.xml
 ├── .env.example
 ├── README.md
 └── IA_USAGE.md
 ```
 
-O `Controller` expõe os endpoints HTTP; o `Service` coordena a consulta e o armazenamento; o `Repository` realiza o acesso ao banco; a `Entity` representa os dados persistidos; o `DTO` define os dados retornados pela API; e `integration/viacep` é responsável pela comunicação com a ViaCEP.
+O `Controller` expõe os endpoints HTTP; o `Service` coordena a consulta e o armazenamento; o `Repository` acessa o banco; a `Entity` representa os dados persistidos; o `DTO` define os dados retornados pela API; e `integration/viacep` comunica com a ViaCEP.
 
-## Como executar
+## Execução com Docker
+
+Esta é a forma recomendada para executar o projeto. Pré-requisitos:
+
+- Docker Compose
+
+O Compose usa valores padrão de desenvolvimento para que seja possível subir tudo com o único comando abaixo. Se quiser personalizar o banco, copie `.env.example` para `.env` e ajuste as variáveis; os valores de senha do exemplo são apenas para desenvolvimento local.
+
+No Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+No Linux, macOS ou Git Bash:
+
+```bash
+cp .env.example .env
+```
+
+Na raiz do projeto, suba a aplicação:
+
+```bash
+docker compose up --build
+```
+
+- Frontend: http://localhost:3000
+- Backend: http://localhost:8080
+
+As portas padrão são `3000` (frontend), `8080` (backend) e `5432` (PostgreSQL). Se alguma estiver ocupada, você pode definir `FRONTEND_HOST_PORT`, `BACKEND_HOST_PORT` ou `POSTGRES_HOST_PORT` no `.env`; essas variáveis mudam somente as portas publicadas na máquina, não a comunicação interna entre os containers.
+
+Para encerrar os serviços:
+
+```bash
+docker compose down
+```
+
+Para encerrar e também remover os dados persistidos do PostgreSQL:
+
+```bash
+docker compose down -v
+```
+
+## Execução sem Docker
 
 ### Backend
 
-Pré-requisitos:
+Pré-requisitos: Java 21, PostgreSQL e o Maven Wrapper incluído no projeto.
 
-- Java 21
-- PostgreSQL
-- Maven Wrapper
-
-Crie um banco PostgreSQL chamado `consulta_cep`.
-
-Copie `.env.example` para `.env` na raiz do projeto e configure a conexão utilizando seus próprios dados locais. O arquivo `.env` não deve ser versionado.
+Crie um banco PostgreSQL chamado `consulta_cep`, copie `.env.example` para `.env` e ajuste as variáveis de conexão com seus dados locais. Não versione credenciais.
 
 No Windows PowerShell:
 
@@ -68,11 +107,7 @@ cp .env.example .env
 ./mvnw spring-boot:run
 ```
 
-O backend será iniciado em:
-
-```text
-http://localhost:8080
-```
+O backend inicia em `http://localhost:8080`.
 
 ### Frontend
 
@@ -84,13 +119,7 @@ npm install
 npm run dev
 ```
 
-Abra o endereço local informado pelo Vite. Por padrão, a interface fica disponível em:
-
-```text
-http://localhost:5173
-```
-
-Durante o desenvolvimento, o Vite encaminha as chamadas para `/consultas` ao backend em `http://localhost:8080`.
+Abra o endereço local informado pelo Vite (por padrão, `http://localhost:5173`). Durante o desenvolvimento, o Vite encaminha as chamadas `/consultas` para o backend.
 
 ## Funcionalidades
 
@@ -101,37 +130,11 @@ Durante o desenvolvimento, o Vite encaminha as chamadas para `/consultas` ao bac
 - Tratamento de erros da API.
 - Interface web em Vue.
 
-## Arquitetura
-
-O fluxo principal da consulta é:
-
-```text
-Frontend Vue
-     ↓
-Controller
-     ↓
-Service
-     ↓
-ViaCepClient → ViaCEP
-     ↓
-Repository
-     ↓
-PostgreSQL
-```
-
-O `Service` coordena a consulta externa, transforma os dados recebidos e realiza a persistência do histórico.
-
 ## API
 
 ### `GET /consultas?cep={cep}`
 
-Consulta o CEP informado e retorna os dados do endereço:
-
-- `cep`
-- `logradouro`
-- `bairro`
-- `cidade`
-- `dataConsulta`
+Consulta o CEP informado e retorna `cep`, `logradouro`, `bairro`, `cidade` e `dataConsulta`.
 
 Exemplo:
 
@@ -141,13 +144,7 @@ GET http://localhost:8080/consultas?cep=01001000
 
 ### `GET /consultas`
 
-Retorna o histórico das consultas realizadas.
-
-Quando não existem consultas, retorna uma lista vazia:
-
-```json
-[]
-```
+Retorna o histórico das consultas realizadas ou uma lista vazia (`[]`) quando não há registros.
 
 Exemplo:
 
@@ -155,26 +152,19 @@ Exemplo:
 GET http://localhost:8080/consultas
 ```
 
-### Tratamento de erros
-
-- `400 Bad Request` — CEP inválido.
-- `404 Not Found` — CEP não encontrado.
-- `502 Bad Gateway` — indisponibilidade ou falha de comunicação com a ViaCEP.
+Erros de CEP inválido, CEP não encontrado e indisponibilidade da ViaCEP retornam HTTP 400, 404 e 502, respectivamente.
 
 ## Testes
 
-Para executar os testes do backend:
+Execute os testes do backend na raiz do projeto:
 
 ```powershell
 .\mvnw.cmd test
 ```
 
-Os testes cobrem as principais regras da aplicação, incluindo consulta, histórico, persistência, tratamento de erros e integração com a ViaCEP.
+Os testes do banco utilizam H2. Para validar o build do frontend:
 
-Os testes de persistência utilizam H2.
-
-## Observações
-
-O backend e o frontend são executados separadamente durante o desenvolvimento.
-
-A estrutura do banco é criada ou atualizada automaticamente pelo Hibernate conforme a configuração da aplicação.
+```bash
+cd frontend
+npm run build
+```
