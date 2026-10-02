@@ -19,6 +19,7 @@ Aplicação para consultar endereços por CEP utilizando a API pública ViaCEP e
 
 ```text
 consulta-cep/
+├── frontend/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/jadylima/consultacep/
