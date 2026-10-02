@@ -1,0 +1,234 @@
+:root {
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: #1f2937;
+  background: #f5f7fa;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  font-smooth: always;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.pagina {
+  width: min(100% - 32px, 900px);
+  margin: 0 auto;
+  padding: 56px 0 72px;
+}
+
+.cabecalho {
+  margin-bottom: 28px;
+}
+
+.rotulo {
+  margin: 0 0 7px;
+  color: #47658d;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 8px;
+  color: #172b4d;
+  font-size: clamp(2rem, 5vw, 2.6rem);
+  letter-spacing: -0.04em;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #203653;
+  font-size: 1.22rem;
+}
+
+.subtitulo {
+  margin-bottom: 0;
+  color: #66758a;
+}
+
+.cartao {
+  margin-top: 18px;
+  padding: 24px;
+  border: 1px solid #e0e6ed;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgb(28 49 77 / 4%);
+}
+
+.formulario label {
+  display: block;
+  margin-bottom: 8px;
+  color: #384b63;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.controles {
+  display: flex;
+  gap: 10px;
+}
+
+.controles input {
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  padding: 0 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  color: #1f2937;
+  outline: none;
+}
+
+.controles input:focus {
+  border-color: #426da8;
+  box-shadow: 0 0 0 3px rgb(66 109 168 / 14%);
+}
+
+.controles button {
+  flex: 0 0 auto;
+  min-width: 120px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 7px;
+  background: #315f99;
+  color: #fff;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.controles button:hover:not(:disabled) {
+  background: #264f83;
+}
+
+.controles button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.mensagem {
+  margin: 14px 0 0;
+  font-size: 0.92rem;
+}
+
+.mensagem.erro {
+  color: #a52b35;
+}
+
+.mensagem.sucesso {
+  color: #24724f;
+}
+
+.dados {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 24px;
+  margin: 0;
+}
+
+.dados div {
+  min-width: 0;
+}
+
+.dados dt {
+  margin-bottom: 5px;
+  color: #6b7788;
+  font-size: 0.82rem;
+}
+
+.dados dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #26384f;
+  font-weight: 650;
+}
+
+.estado-vazio {
+  margin: 0;
+  padding: 20px;
+  border: 1px dashed #d3dce7;
+  border-radius: 8px;
+  color: #68788d;
+  text-align: center;
+}
+
+.tabela-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #e8edf2;
+  vertical-align: top;
+  font-size: 0.9rem;
+}
+
+th {
+  color: #617188;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+td:first-child {
+  color: #315f99;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+@media (max-width: 600px) {
+  .pagina {
+    width: min(100% - 24px, 900px);
+    padding: 36px 0 48px;
+  }
+
+  .cartao {
+    padding: 19px 16px;
+  }
+
+  .controles {
+    flex-direction: column;
+  }
+
+  .controles button {
+    height: 46px;
+  }
+
+  .dados {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  table {
+    min-width: 660px;
+  }
+}
